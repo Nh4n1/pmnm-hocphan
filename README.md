@@ -17,3 +17,8 @@ Tôi muốn học về phần mềm mã nguồn mở vì đây là một phần 
 | OBS Studio | Quay màn hình và livestream | GPL-2.0-or-later |
 | VLC Media Player | Phát video và âm thanh | GPL-2.0-or-later |
 | LibreOffice | Bộ ứng dụng văn phòng | MPL-2.0 / LGPL-3.0-or-later |
+
+## Giấy phép
+Mã nguồn trong kho này được phát hành
+theo [Giấy phép MIT](LICENSE).
+SPDX-License-Identifier: MIT
