@@ -424,20 +424,106 @@ def search():
 
 @app.route("/api/students")
 def api_student_list():
-    return jsonify([])
+    lop = request.args.get("lop", "")
+    min_avg = None
+
+    if "min_avg" in request.args:
+        min_avg = request.args.get(
+            "min_avg",
+            type=float,
+        )
+
+        if min_avg is None:
+            abort(
+                400,
+                description="min_avg phải là một số.",
+            )
+
+    results = [
+        student_summary(mssv)
+        for mssv, student in STUDENTS.items()
+        if (
+            not lop
+            or student["lop"].casefold() == lop.casefold()
+        )
+    ]
+
+    if min_avg is not None:
+        results = [
+            item
+            for item in results
+            if (
+                item["average"] is not None
+                and item["average"] >= min_avg
+            )
+        ]
+
+    return jsonify(results)
 
 
 @app.route("/api/students/<mssv>")
 def api_student_detail(mssv):
-    return jsonify({})
-
+    return jsonify(student_summary(mssv))
 
 @app.route(
     "/api/students/<mssv>/scores/<course>",
     methods=["GET", "PUT", "DELETE"],
 )
 def student_score(mssv, course):
-    return jsonify({})
+    item = student_summary(mssv)
+
+    scores = item["scores"]
+    course = course.upper()
+
+    if request.method == "PUT":
+        score = request.args.get(
+            "score",
+            type=float,
+        )
+
+            abort(
+                400,
+                description="Điểm phải là số từ 0 đến 10.",
+            )
+
+        created = course not in scores
+        scores[course] = score
+
+        data = {
+            "mssv": mssv,
+            "course": course,
+            "score": score,
+            "average": average(scores),
+        }
+
+        if created:
+            return jsonify(data), 201, {
+                "Location": url_for(
+                    "student_score",
+                    mssv=mssv,
+                    course=course,
+                )
+            }
+
+        return jsonify(data), 200
+
+    if course not in scores:
+        abort(
+            404,
+            description=(
+                f"Chưa có điểm học phần {course}."
+            ),
+        )
+
+    if request.method == "DELETE":
+        del scores[course]
+        return "", 204
+
+    return jsonify({
+        "mssv": mssv,
+        "course": course,
+        "score": scores[course],
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
