@@ -481,6 +481,7 @@ def student_score(mssv, course):
             type=float,
         )
 
+        if score is None or not (0 <= score <= 10):
             abort(
                 400,
                 description="Điểm phải là số từ 0 đến 10.",
@@ -524,6 +525,32 @@ def student_score(mssv, course):
         "course": course,
         "score": scores[course],
     })
+    
+@app.errorhandler(400)
+@app.errorhandler(404)
+@app.errorhandler(405)
+def handle_error(error):
+    titles = {
+        400: "Dữ liệu không hợp lệ",
+        404: "Không tìm thấy",
+        405: "Phương thức không được hỗ trợ",
+    }
+
+    code = error.code
+    title = titles[code]
+
+    if request.path.startswith("/api/"):
+        return jsonify({
+            "error": title,
+            "detail": error.description,
+        }), code
+
+    body = f"""
+<h1>{escape(code)} — {escape(title)}</h1>
+<p>{escape(error.description)}</p>
+"""
+
+    return layout(title, body), code
 
 if __name__ == '__main__':
     app.run(debug=True)
