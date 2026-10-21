@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% from "_macros.html" import item_card, pagination %}
+
+{% block title %}Thực đơn{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Thực đơn</h1>
+
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    {% for item in menu %}
+        <div class="col">
+            {{ item_card(item) }}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="mt-4">
+    <p>Tổng số món: {{ total_dishes }}</p>
+    <p>Số món còn bán: {{ available_count }}</p>
+    <p>Giá trung bình: {{ average_price | vnd }}</p>
+</div>
+
+{{ pagination(page, pages, "menu") }}
+{% endblock %}

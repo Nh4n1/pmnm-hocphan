@@ -1,0 +1,49 @@
+{% macro item_card(item) %}
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title">{{ item.name }}</h5>
+
+        <p class="card-text">
+            Giá: {{ item.price | vnd }}
+        </p>
+
+        {% if item.available %}
+            <span class="badge bg-success">Còn bán</span>
+        {% else %}
+            <span class="badge bg-secondary">Hết món</span>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro pagination(page, pages, endpoint) %}
+<nav aria-label="Phân trang">
+    <ul class="pagination justify-content-center mt-4">
+
+        <li class="page-item {% if page == 1 %}disabled{% endif %}">
+            <a class="page-link"
+               href="{{ url_for(endpoint, page=page - 1) }}">
+                Trước
+            </a>
+        </li>
+
+        {% for number in range(1, pages + 1) %}
+            <li class="page-item {% if number == page %}active{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for(endpoint, page=number) }}">
+                    {{ number }}
+                </a>
+            </li>
+        {% endfor %}
+
+        <li class="page-item {% if page == pages %}disabled{% endif %}">
+            <a class="page-link"
+               href="{{ url_for(endpoint, page=page + 1) }}">
+                Sau
+            </a>
+        </li>
+
+    </ul>
+</nav>
+{% endmacro %}

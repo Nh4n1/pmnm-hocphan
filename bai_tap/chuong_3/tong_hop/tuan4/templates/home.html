@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+<div class="p-4 p-md-5 bg-white border rounded">
+    <h1 class="fw-bold">{{ shop.name }}</h1>
+
+    <p class="text-secondary">{{ shop.address }}</p>
+
+    <p>
+        Giờ hoạt động:
+        {{ shop.open }}:00 - {{ shop.close }}:00
+    </p>
+
+    {% if is_open %}
+        <span class="badge bg-dark">Đang mở cửa</span>
+    {% else %}
+        <span class="badge bg-secondary">Đang đóng cửa</span>
+    {% endif %}
+
+    <hr>
+
+    <h3>Khuyến mãi</h3>
+    <ul>
+        {% for promotion in promotions %}
+            <li>{{ promotion }}</li>
+        {% else %}
+            <li>Hiện chưa có khuyến mãi.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('menu') }}" class="btn btn-dark mt-3">
+        Xem thực đơn
+    </a>
+</div>
+{% endblock %}
