@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tính chỉ số BMI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background-color: #f5f5f5;
+            color: #212529;
+        }
+
+        .calculator {
+            max-width: 520px;
+            margin: 60px auto;
+            padding: 32px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+        }
+
+        .form-control {
+            border-color: #ced4da;
+        }
+
+        .form-control:focus {
+            border-color: #212529;
+            box-shadow: 0 0 0 0.2rem rgba(33, 37, 41, 0.12);
+        }
+
+        .btn-dark-custom {
+            background-color: #212529;
+            color: #ffffff;
+            border: 1px solid #212529;
+        }
+
+        .btn-dark-custom:hover {
+            background-color: #424649;
+            border-color: #424649;
+            color: #ffffff;
+        }
+
+        .result {
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .bmi-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .page-link {
+            color: #212529;
+            text-decoration: none;
+        }
+
+        .page-link:hover {
+            color: #424649;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <section class="calculator">
+            <h1 class="h3 text-center fw-bold mb-2">
+                Tính chỉ số BMI
+            </h1>
+
+            <p class="text-secondary text-center mb-4">
+                Công cụ tính chỉ số khối cơ thể
+            </p>
+
+            <form action="{{ url_for('bmi.bmi_calculator_route') }}" method="POST">
+                <div class="mb-3">
+                    <label for="height" class="form-label fw-semibold">
+                        Chiều cao (cm)
+                    </label>
+
+                    <input
+                        type="text"
+                        inputmode="decimal"
+                        class="form-control {% if height_error %}is-invalid{% endif %}"
+                        id="height"
+                        name="height"
+                        placeholder="Ví dụ: 170 hoặc 170,5"
+                        value="{{ height_value }}"
+                        aria-describedby="height-error"
+                    >
+
+                    {% if height_error %}
+                        <div id="height-error" class="invalid-feedback">
+                            {{ height_error }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="weight" class="form-label fw-semibold">
+                        Cân nặng (kg)
+                    </label>
+
+                    <input
+                        type="text"
+                        inputmode="decimal"
+                        class="form-control {% if weight_error %}is-invalid{% endif %}"
+                        id="weight"
+                        name="weight"
+                        placeholder="Ví dụ: 60 hoặc 60,5"
+                        value="{{ weight_value }}"
+                        aria-describedby="weight-error"
+                    >
+
+                    {% if weight_error %}
+                        <div id="weight-error" class="invalid-feedback">
+                            {{ weight_error }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-dark-custom w-100">
+                    Tính BMI
+                </button>
+            </form>
+
+            {% if bmi is not none %}
+                <div class="result alert alert-{{ result_class }} mb-0"
+                     role="status">
+                    <p class="mb-1">Chỉ số BMI của bạn</p>
+
+                    <div class="bmi-value">
+                        {{ "%.2f"|format(bmi) }}
+                    </div>
+
+                    <h2 class="h5 fw-bold mt-2 mb-2">
+                        {{ category }}
+                    </h2>
+
+                    {% if category == "Bình thường" %}
+                        <p class="mb-0">
+                            BMI bình thường: từ 18.5 đến dưới 23.
+                        </p>
+                    {% elif category == "Thiếu cân" %}
+                        <p class="mb-0">
+                            BMI dưới 18.5.
+                        </p>
+                    {% elif category == "Thừa cân" %}
+                        <p class="mb-0">
+                            BMI từ 23 đến dưới 25.
+                        </p>
+                    {% else %}
+                        <p class="mb-0">
+                            BMI từ 25 trở lên.
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <hr class="my-4">
+
+            <p class="text-secondary small mb-2">
+                Phạm vi chiều cao: 50–250 cm.
+                Phạm vi cân nặng: 10–300 kg.
+            </p>
+
+            <div class="text-center">
+                <a href="{{ url_for('home') }}" class="page-link">
+                    ← Quay về trang chủ
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
